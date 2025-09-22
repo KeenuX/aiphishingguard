@@ -1,0 +1,10 @@
+http://testsafebrowsing.appspot.com/s/phishing.html
+http://testsafebrowsing.appspot.com/s/malware.html
+http://malware.testing.google.test/testing/malware/phishing/
+http://testsafebrowsing.appspot.com/s/unwanted.html
+http://testsafebrowsing.appspot.com/s/malware.html
+http://malware.testing.google.test/testing/malware/
+
+http://example.com/login
+http://example.com/verify-account
+http://example.com/secure-update

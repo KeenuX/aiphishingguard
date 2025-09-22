@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing URL Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 50px 30px;
+            width: 920px;
+            height: 500px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        input::placeholder {
+            color: #e0e0e0;
+        }
+        input:focus {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        button {
+            padding: 15px 30px;
+            border: none;
+
+        
+            border-radius: 12px;
+            background: linear-gradient(45deg, #ff6a00, #ee0979);
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        .safe {
+            color: #00ff7f;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .phishing {
+            color: #ff4c4c;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            animation: float 10s linear infinite;
+            pointer-events: none;
+        }
+        .circle:nth-child(1) { width: 200px; height: 200px; top: -50px; left: -50px; animation-duration: 15s; }
+        .circle:nth-child(2) { width: 300px; height: 300px; bottom: -100px; right: -100px; animation-duration: 20s; }
+        .circle:nth-child(3) { width: 150px; height: 150px; top: 20%; left: 70%; animation-duration: 12s; }
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-50px) translateX(30px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+
+    <div class="container">
+        <h1>Phishing URL Detector</h1>
+        <input type="text" id="urlInput" placeholder="Enter URL here">
+        <div class="result" id="result"></div>
+        <button onclick="checkURL()">Check URL</button>
+    </div>
+    <script>
+ async function checkURL() {
+    const url = document.getElementById('urlInput').value.trim();
+    const resultDiv = document.getElementById('result');
+
+    if (!url) {
+        resultDiv.textContent = "Please enter a URL!";
+        resultDiv.className = "result phishing";
+        return;
+    }
+
+    resultDiv.textContent = "Checking...";
+    resultDiv.className = "result";
+
+    try {
+        const res = await fetch("http://localhost:5000/check-url", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+
+        if (data.phishing) {
+            resultDiv.textContent = "⚠️ This URL is phishing/malicious!";
+            resultDiv.className = "result phishing";
+        } else {
+            resultDiv.textContent = "✅ This URL looks safe!";
+            resultDiv.className = "result safe";
+        }
+    } catch (err) {
+        resultDiv.textContent = "❌ Error checking URL.";
+        resultDiv.className = "result phishing";
+        console.error(err);
+    }
+}
+</script>
+
+
+</body>
+</html>
